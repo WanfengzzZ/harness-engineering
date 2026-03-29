@@ -1,0 +1,9 @@
+{
+  "slug": "harness-engineering",
+  "version": "1.0.0",
+  "description": "为 Agent 构建高效可工作的工程环境",
+  "license": "MIT",
+  "tags": ["agent", "engineering", "productivity", "infrastructure"],
+  "author": "OpenAI Community",
+  "repository": "https://github.com/openai/harness-engineering"
+}
