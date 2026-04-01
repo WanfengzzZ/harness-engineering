@@ -1,0 +1,86 @@
+# Harness Engineering CI 模板
+# 包含：架构检查、文档验证、测试、类型检查
+# 使用方式：复制到 .github/workflows/harness-ci.yml
+
+name: Harness CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: 代码质量检查
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+
+  typecheck:
+    name: 类型检查
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run typecheck
+
+  test:
+    name: 测试
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm test
+      # 偶发失败自动重试（Harness 原则：不要阻塞）
+    timeout-minutes: 15
+
+  architecture:
+    name: 架构依赖检查
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: 运行架构检查
+        run: python scripts/architecture-lint.py .
+
+  docs:
+    name: 文档验证
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 需要 git 历史
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: 验证文档
+        run: python scripts/validate-docs.py .
+
+  # 可选：Agent 记忆维护（定期任务）
+  # memory-gardening:
+  #   name: Agent 记忆维护
+  #   runs-on: ubuntu-latest
+  #   if: github.event_name == 'schedule'
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-python@v5
+  #       with:
+  #         python-version: '3.11'
+  #     - run: python scripts/memory-gardening.py .

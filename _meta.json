@@ -1,9 +1,9 @@
 {
   "slug": "harness-engineering",
-  "version": "1.0.0",
-  "description": "为 Agent 构建高效可工作的工程环境",
+  "version": "2.0.0",
+  "description": "为 Agent 构建高效可工作的工程环境（v2.0：三大支柱框架 + 跨编辑器兼容 + MCP 集成 + 多 Agent 协作）",
   "license": "MIT",
-  "tags": ["agent", "engineering", "productivity", "infrastructure"],
-  "author": "OpenAI Community",
-  "repository": "https://github.com/openai/harness-engineering"
+  "tags": ["agent", "engineering", "productivity", "infrastructure", "harness", "mcp", "agents-md", "claude-md", "cursor-rules", "ci-cd"],
+  "author": "Wanfeng",
+  "repository": "https://github.com/WanfengzzZ/harness-engineering"
 }

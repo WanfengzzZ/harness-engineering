@@ -1,219 +1,107 @@
-# Harness Engineering Skill 使用指南
+# Harness Engineering Skill 使用指南 v2.0
 
 ## 快速开始
 
-### 第一步：安装
-
+### 安装
 ```bash
-# 复制 skill 到你的编辑器
 cp -r harness-engineering ~/.codebuddy/skills/
 ```
 
-### 第二步：触发使用
-
-在你的 AI 编辑器中，遇到以下场景时会自动触发：
-
+### 触发场景
 - 需要优化代码仓库结构
 - 需要建立 AI 可读的文档体系
-- 需要设计自动化反馈回路
+- 需要配置跨编辑器 Agent 指令文件
+- 需要集成 MCP 工具
 - Agent 工作效率低，怀疑是环境问题
-
-### 第三步：获取产出
-
-根据使用场景，可能产出：
-
-1. **诊断报告** - 当前环境评估
-2. **设计方案** - 完整 Harness 设计
-3. **实施计划** - 分阶段路线图
-4. **实施工具** - 脚本和模板
 
 ## 使用示例
 
 ### 示例 1：诊断环境
-
-**提示词**：
 ```
-使用 harness-engineering skill，诊断我们项目的工程环境，
-找出 Agent 工作效率低的根本原因，并给出改进建议。
+使用 harness-engineering skill，诊断当前项目的工程环境成熟度，
+找出 Agent 工作效率低的根本原因。
 ```
-
-**预期产出**：
-- 成熟度评分（0-100）
-- 问题清单（按优先级）
-- 改进建议（具体可执行）
+**产出**：成熟度评分 + 问题清单 + 改进建议
 
 ### 示例 2：新项目设计
-
-**提示词**：
 ```
-我们准备启动一个新项目，请按照 Harness Engineering 
-原则设计完整的工程环境方案。
+按照 Harness Engineering v2.0 的三大支柱原则，
+为新项目设计完整的工程环境方案。
 ```
+**产出**：AGENTS.md + docs/ 结构 + 架构约束 + CI 配置
 
-**预期产出**：
-- AGENTS.md 模板（~100 行）
-- docs/目录结构
-- 架构约束定义
-- CI/CD 设计
-
-### 示例 3：实施改进
-
-**提示词**：
+### 示例 3：跨编辑器配置
 ```
-根据 Harness Engineering 原则，帮我们实现以下改进：
-1. 创建 AGENTS.md 文件
-2. 设计 docs/目录结构  
-3. 编写架构依赖检查脚本
+帮我配置项目的 Agent 指令文件，团队使用 CodeBuddy、
+Cursor 和 Claude Code，需要统一配置。
 ```
+**产出**：AGENTS.md + CLAUDE.md + .cursor/rules/ 配置
 
-**预期产出**：
-- 可直接使用的文件
-- 可执行的脚本
-- 实施文档
+### 示例 4：MCP 集成
+```
+我们项目需要 Agent 能查询数据库和调用内部 API，
+帮我设计 MCP 工具集成方案。
+```
+**产出**：MCP 配置 + 使用约束文档 + AGENTS.md 更新
 
-## 核心产出物说明
+### 示例 5：实施改进
+```
+根据 Harness Engineering 原则，帮我实现：
+1. 创建 AGENTS.md
+2. 编写架构检查脚本
+3. 配置 CI 流水线
+4. 建立文档验证流程
+```
+**产出**：可直接使用的文件和脚本
+
+## 核心产出物
 
 ### AGENTS.md
+- **作用**：Agent 工作地图（~100 行）
+- **位置**：项目根目录
+- **模板**：`assets/agents-template.md`
 
-**作用**：Agent 工作地图（~100 行）
+### 跨编辑器配置
+- **CLAUDE.md**：Claude Code 专属（`assets/claude-md-template.md`）
+- **Cursor Rules**：`.cursor/rules/` 格式（`assets/cursor-rules-template.mdc`）
+- **指南**：`references/cross-editor-guide.md`
 
-**内容**：
-- 快速开始指南
-- 文档导航链接
-- 质量门控说明
-- 反馈回路指导
+### CI 配置
+- **GitHub Actions**：`assets/github-actions-template.yml`
+- 包含：lint + test + architecture + docs 验证
 
-**位置**：项目根目录
-
-### docs/目录
-
-**作用**：结构化知识库
-
-**结构**：
-```
-docs/
-├── design-docs/      # 设计文档
-├── exec-plans/       # 执行计划
-├── product-specs/    # 产品规格
-├── references/       # 参考文档
-└── generated/        # 自动生成
-```
-
-### 架构约束
-
-**作用**：强制执行依赖规则
-
-**实现**：
-- 自定义 Lint 脚本
-- CI 验证作业
-- 错误信息包含修复指导
-
-### 黄金原则
-
-**作用**：编码规范和质量标准
-
-**内容**：10 条核心原则
-
-**位置**：`references/golden-principles.md`
+### 工具脚本
+- `scripts/architecture-lint.py`：架构检查（AST + 循环依赖）
+- `scripts/validate-docs.py`：文档验证（断链 + git 集成）
+- `scripts/memory-gardening.py`：Agent 记忆清理
 
 ## 最佳实践
 
 ### 1. 循序渐进
-
-不要试图一次性完成所有改进：
-
 ```
-阶段 1（P0）：基础文档 + 核心约束
-阶段 2（P1）：自动化反馈
-阶段 3（P2）：可观测性增强
+P0：AGENTS.md + docs/ + 架构约束
+P1：CI 自动化 + 文档验证 + 跨编辑器
+P2：可观测性 + MCP + 记忆管理
 ```
 
 ### 2. 持续迭代
-
-Harness Engineering 是持续过程：
-
 - 每周清理代码漂移
 - 每月评估健康度
 - 每季度更新原则
 
-### 3. 量化指标
-
-跟踪以下指标：
-
-- **吞吐量**：PR 数量/天
-- **质量**：架构违规次数
-- **自主性**：Agent 自主完成率
-- **健康度**：文档新鲜度
-
-### 4. 平衡约束
-
-- 边界强制执行
-- 内部允许自主
-- 避免过度设计
-
-## 常见问题
-
-### Q1: 多久能看到效果？
-
-**A**: 通常 2-4 周能看到明显改善：
-- 第 1 周：基础建设
-- 第 2 周：开始自动化
-- 第 3-4 周：效果显现
-
-### Q2: 小团队也需要吗？
-
-**A**: 需要。Harness Engineering 的核心价值：
-- 提高 Agent 自主性
-- 减少人工干预
-- 加速开发迭代
-
-小团队收益更大。
-
-### Q3: 如何说服团队？
-
-**A**: 用数据说话：
-- OpenAI 案例：3 人 5 个月 100 万行代码
-- 计算 ROI：时间节省 vs 投入
-- 从小处开始，展示效果
-
-### Q4: 现有项目如何改造？
-
-**A**: 渐进式改造：
-1. 先诊断评估
-2. 制定优先级
-3. 分阶段实施
-4. 持续改进
-
-### Q5: 需要什么工具支持？
-
-**A**: 基础工具：
-- Lint 工具（ESLint 等）
-- CI/CD 系统（GitHub Actions 等）
-- 测试框架
-- 文档系统
-
-高级工具（可选）：
-- 自定义 Lint
-- 自动化测试
-- 可观测性平台
+### 3. 量化跟踪
+- 吞吐量：PR 数量/天
+- 质量：架构违规次数
+- 自主性：Agent 自主完成率
+- 健康度：文档新鲜度
 
 ## 参考资源
 
-- **原文**：https://openai.com/zh-Hans-CN/index/harness-engineering/
 - **检查清单**：`references/checklist.md`
 - **黄金原则**：`references/golden-principles.md`
-- **AGENTS 模板**：`assets/agents-template.md`
-
-## 获取帮助
-
-遇到问题？
-
-1. 查看文档：`README.md`
-2. 检查清单：`references/checklist.md`
-3. 提交 Issue：GitHub Issues
-4. 社区讨论：GitHub Discussions
+- **跨编辑器指南**：`references/cross-editor-guide.md`
+- **MCP 集成指南**：`references/mcp-integration.md`
 
 ---
 
-**版本**：1.0.0  
-**许可**：MIT
+**版本**：2.0.0 | **许可**：MIT

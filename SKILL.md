@@ -1,11 +1,11 @@
 ---
-name: harness-engineering
+name: harness-engineering-skill
 description: 为 Agent 构建高效可工作的工程环境。当需要优化代码仓库结构、文档组织、反馈回路、自动化流程，使 Agent 能够自主高效地完成开发任务时使用此技能。核心目标：让代码、文档、测试对 AI 可读而非仅对人可读。
 ---
 
-# Harness Engineering
+# Harness Engineering v2.0
 
-**Harness Engineering** 是 2026 年最重要的 AI 工程概念，由 HashiCorp 联创提出，OpenAI 通过内部实验验证。核心理念：**给 Agent（干活的牛马）套上 Harness（马具，让它能真正干活的整套工程结构）**。
+**Harness Engineering** 是 2026 年最重要的 AI 工程范式。核心理念：**给 Agent 套上 Harness（马具）——不是告诉它做什么，而是搭建让它能独立把活儿干完的整套工程环境**。
 
 ## 核心认知
 
@@ -17,6 +17,7 @@ description: 为 Agent 构建高效可工作的工程环境。当需要优化代
 
 **本质区别**：
 - 提示词工程 = 告诉它做什么
+- 上下文工程 = 让它看到全貌
 - Harness Engineering = 让它有工具、有规则、有反馈，能独立把活儿干完
 
 ### 核心问题
@@ -24,219 +25,207 @@ description: 为 Agent 构建高效可工作的工程环境。当需要优化代
 > **你是否给 AI 提供了一个它可以自我迭代的环境？**
 
 自问清单：
-- [ ] 你的架构约束是写在文档里，还是只存在于团队口头约定中？
-- [ ] 你的测试能被自动运行，还是需要人手动触发？
-- [ ] 你的设计决策有记录，还是散落在三个月前的聊天记录里？
-- [ ] 你的代码仓库对 AI 可读吗？（不仅是人可读）
+- [ ] 架构约束是写在文档里，还是只存在于口头约定？
+- [ ] 测试能被自动运行，还是需要人手动触发？
+- [ ] 设计决策有记录，还是散落在聊天记录里？
+- [ ] 代码仓库对 AI 可读吗？（不仅是人可读）
+- [ ] Agent 出错后能自己发现并修复吗？
 
-如果答案大多是后者，Agent 的能力天花板受限于你混乱的工程环境。
+## 触发场景
 
-## 当何时使用此技能
-
-**触发场景**：
+**使用此技能**：
 - 需要优化代码仓库结构，使 Agent 能够自主导航和工作
 - 需要建立对 AI 可读的文档体系（而非仅对人可读）
 - 需要设计自动化反馈回路（CI/CD、自动测试、代码检查）
-- 需要改进 Agent 工作环境的工程基础设施
-- 需要提高 Agent 的自主工作能力和吞吐量
+- 需要配置跨编辑器的 Agent 指令文件（AGENTS.md / CLAUDE.md / Cursor Rules）
+- 需要集成 MCP 工具让 Agent 调用外部服务
+- 需要设计多 Agent 协作和审核流程
+- 需要管理 Agent 的工作记忆和跨会话上下文
 - 遇到 Agent 工作效率低，怀疑是环境问题而非模型问题
 
-**不适用的场景**：
-- 单纯的代码实现任务（应使用代码开发类技能）
-- 单纯的需求分析（应使用产品需求类技能）
-- 单纯的提示词优化（应使用提示词优化类技能）
+**不适用**：
+- 单纯的代码实现任务
+- 单纯的需求分析
+- 单纯的提示词优化
 - 与 Agent 工程环境无关的任务
 
-## 核心原则
+---
 
-### 原则 1：代码仓库即记录系统（Repository as System of Record）
+## 三大支柱框架
 
-**错误做法**：
-- 知识存储在 Google Docs、Notion、飞书等外部系统
-- 架构决策散落在 Slack、微信群、邮件讨论中
-- 依赖"口头约定"和"团队默契"
+Harness Engineering 的核心由三大支柱构成（参考 Martin Fowler 分类框架）：
 
-**正确做法**：
+```
+┌─────────────────────────────────────────────────┐
+│              Harness Engineering                │
+├─────────────┬──────────────┬────────────────────┤
+│  约束        │  反馈回路     │  验证              │
+│ Constraints  │ Feedback     │ Verification       │
+│              │ Loops        │                    │
+├─────────────┼──────────────┼────────────────────┤
+│ 仓库即记录   │ Agent 可读性  │ 自动化测试         │
+│ 架构约束     │ 应用可观测性  │ Agent-to-Agent 审核│
+│ 品味不变式   │ CI/CD 自动化  │ 吞吐量合并理念     │
+│ 跨编辑器配置 │ 文档园艺      │ 质量度量           │
+│              │ Agent 记忆    │                    │
+└─────────────┴──────────────┴────────────────────┘
+```
+
+### 支柱一：约束（Constraints）
+
+> 通过强制执行不变量来引导 Agent，而非微观管理
+
+#### 1.1 代码仓库即记录系统
+
+**核心**：Agent 看不到的信息 = 不存在
+
+**做法**：
 - 所有知识版本化存储在代码仓库内（`docs/` 目录）
 - AGENTS.md 作为地图（~100 行），指向结构化文档
 - 设计决策、产品原则、工程规范全部内化到仓库
+- 禁止知识外置到 Notion、飞书、Google Docs
 
-**文档结构示例**：
+**文档结构**：
 ```
 docs/
-├── design-docs/           # 设计文档目录
-│   ├── index.md          # 设计文档索引
-│   ├── core-beliefs.md   # 核心理念（操作原则）
-│   └── ...
+├── design-docs/           # 设计文档
+│   ├── index.md          # 索引
+│   └── core-beliefs.md   # 核心理念
 ├── exec-plans/           # 执行计划
-│   ├── active/          # 活跃计划
-│   ├── completed/       # 已完成计划
-│   └── tech-debt-tracker.md  # 技术债务追踪
-├── generated/           # 自动生成的文档
-│   └── db-schema.md     # 数据库 Schema（自动更新）
-├── product-specs/       # 产品规格
-│   ├── index.md
-│   └── new-user-onboarding.md
-├── references/          # 参考文档
-│   ├── design-system-reference-llms.txt
-│   ├── nixpacks-llms.txt
-│   └── uv-llms.txt
-├── DESIGN.md            # 设计系统总览
-├── FRONTEND.md          # 前端规范
-├── PLANS.md             # 计划管理
-├── PRODUCT_SENSE.md     # 产品感知
-├── QUALITY_SCORE.md     # 质量评分标准
-├── RELIABILITY.md       # 可靠性要求
-└── SECURITY.md          # 安全规范
+│   ├── active/           # 活跃计划
+│   └── tech-debt-tracker.md
+├── product-specs/        # 产品规格
+├── references/           # 参考文档
+└── generated/            # 自动生成（DB Schema 等）
 ```
 
-**AGENTS.md 示例结构**（~100 行）：
-```markdown
-# Agent 工作指南
+#### 1.2 架构约束代码化
 
-## 快速开始
-本代码仓库由 Agent 自主维护。开始工作前，请阅读：
-- [核心架构](docs/design-docs/core-beliefs.md)
-- [分层地图](ARCHITECTURE.md)
-- [当前计划](docs/exec-plans/active/)
+**核心**：约束不能只存在于文档，必须被工具强制执行
 
-## 文档导航
-- **设计文档**: `docs/design-docs/index.md`
-- **产品规格**: `docs/product-specs/index.md`
-- **执行计划**: `docs/exec-plans/`
-- **参考文档**: `docs/references/`
-
-## 质量门控
-- 所有 PR 必须通过 CI 检查
-- 文档必须与代码同步更新
-- 技术债务必须记录在案
-
-## 反馈回路
-遇到问题？检查：
-1. 是否有相关文档？没有 → 创建
-2. 是否有自动化测试？没有 → 添加
-3. 是否有 Lint 规则？没有 → 编写
+**分层架构**：
+```
+Types → Config → Repo → Service → Runtime → UI
+         ↓          ↓         ↓         ↓
+      Providers（横切关注点）
 ```
 
-### 原则 2：为 Agent 可读性优化（Optimize for Agent Readability）
+**实现方式**：
+- 自定义 Lint 脚本验证依赖方向（见 `scripts/architecture-lint.py`）
+- CI 阻塞违规提交
+- 错误信息必须包含修复指导
+- 定期扫描架构漂移
+
+#### 1.3 品味不变式
+
+将团队的隐性规则显性化编码：
+1. 禁止 YOLO 式探测数据，必须验证边界
+2. 优先使用共享 utility 包，而非手工辅助工具
+3. 所有日志必须结构化，包含 trace_id
+4. 错误处理必须一致，包含修复指导
+5. 配置外部化，禁止硬编码
+6. 命名遵循统一约定
+
+详见 `references/golden-principles.md`
+
+#### 1.4 跨编辑器配置
+
+2026 年 AGENTS.md 已成为事实标准（60,000+ repos 采用），但不同 AI 编辑器有专属配置：
+
+| 文件 | 工具 | 作用 |
+|------|------|------|
+| `AGENTS.md` | 通用（所有工具） | Agent 工作地图，~100 行 |
+| `CLAUDE.md` | Claude Code | Claude 专属指令和偏好 |
+| `.cursor/rules/*.mdc` | Cursor | 支持 globs/alwaysApply 的规则 |
+| `.github/copilot-instructions.md` | GitHub Copilot | Copilot 项目指令 |
+| `GEMINI.md` | Gemini CLI | Gemini 专属配置 |
+
+**策略**：AGENTS.md 作为通用基座，工具专属文件作为增强层。
+详见 `references/cross-editor-guide.md`，模板见 `assets/` 目录。
+
+### 支柱二：反馈回路（Feedback Loops）
+
+> 让 Agent 能感知自己的工作效果，形成自我纠正能力
+
+#### 2.1 为 Agent 可读性优化
 
 **关键认知**：Agent 运行时无法访问的上下文 = 不存在
 
 **优化策略**：
+- **渐进式披露**：AGENTS.md（100 行地图）→ 指向 → docs/ 目录（结构化知识）
+- **架构约束代码化**：写进 Lint 工具，而非只存在文档
+- **文档可验证**：CI 自动检查文档是否与代码同步
 
-#### A. 架构约束代码化
-```typescript
-// ❌ 错误：约束只存在于文档
-// "服务层应该调用 Repository 层"
+#### 2.2 应用可观测性
 
-// ✅ 正确：自定义 Lint 强制约束
-// .eslintrc.js
-module.exports = {
-  rules: {
-    'layer-dependency': 'error',
-    // 依赖方向：Types → Config → Repo → Service → Runtime → UI
-  }
-}
-```
+让 Agent 能直接读取 UI、日志、指标，自主 QA：
 
-#### B. 文档可验证
-```yaml
-# CI 作业验证文档更新
-jobs:
-  validate-docs:
-    runs-on: ubuntu-latest
-    steps:
-      - name: 检查文档与代码同步
-        run: ./scripts/validate-docs-sync.sh
-      - name: 检查过时文档
-        run: ./scripts/find-outdated-docs.sh
-```
-
-#### C. 渐进式披露
-```
-Agent 从小的稳定入口开始，被指导下一步去哪，
-而不是一开始就被淹没在千行文档中。
-
-AGENTS.md (100 行) → 指向 → docs/目录 (结构化知识)
-```
-
-### 原则 3：规范架构与品味（Architectural Constraints & Taste）
-
-**核心思想**：通过强制执行不变量，而非微观管理实现
-
-#### 分层架构示例
-```
-每个业务域内（如应用设置），代码只能"向前"依赖：
-
-Types → Config → Repo → Service → Runtime → UI
-
-横切关注点（认证、连接器、遥测、功能标志）通过 Providers 进入。
-其他任何依赖方向都不被允许，并通过自动化强制执行。
-```
-
-#### 自定义 Lint 规则
-```python
-# scripts/custom-linters/architecture_lint.py
-# 验证分层依赖规则
-
-from pathlib import Path
-
-LAYER_ORDER = ['types', 'config', 'repo', 'service', 'runtime', 'ui']
-
-def check_layer_dependencies(file_path):
-    """检查文件是否违反分层依赖规则"""
-    # 实现依赖方向验证
-    pass
-```
-
-#### 品味不变式
-```markdown
-# docs/references/taste-invariants.md
-
-## 代码品味规则
-
-1. **禁止 YOLO 式探测数据**
-   - 必须验证边界
-   - 或使用类型化的 SDK
-   - 禁止基于猜测的结构构建
-
-2. **共享工具优先**
-   - 使用共享 utility 包
-   - 而非手工编写的辅助工具
-   - 不变式集中管理
-
-3. **结构化日志**
-   - 所有日志必须结构化
-   - 包含 trace_id, span_id
-   - 遵循 OpenTelemetry 规范
-```
-
-### 原则 4：提高应用可读性（Increase Application Readability）
-
-**目标**：让 Agent 能够直接读取 UI、日志、指标，自主 QA
-
-#### A. UI 可读性
+**UI 可读性**：
 - 使应用可根据 git worktree 启动
-- Agent 为每次更改启动并驱动一个实例
-- 接入 Chrome DevTools 协议到智能体运行时
-- 创建处理 DOM 快照、屏幕截图和导航的技能
+- 接入 Chrome DevTools 协议到 Agent 运行时
+- 支持 DOM 快照和屏幕截图
 
-#### B. 可观测性可读性
-```python
-# 本地可观测性堆栈对 Agent 可见
-# Agent 可以使用 LogQL 查询日志，PromQL 查询指标
-# 日志、指标和追踪记录通过临时堆栈展示
+**日志/指标可读性**：
+- 结构化日志（LogQL 查询）
+- 性能指标（PromQL 查询）
+- trace_id / span_id 追踪
+
+#### 2.3 CI/CD 自动化验证
+
+完整的 CI 流水线应包含：
+```yaml
+必需检查:
+  - lint: 代码质量检查
+  - architecture: 架构依赖检查
+  - test: 单元测试 + 集成测试
+  - docs: 文档同步检查
+  - typecheck: 类型检查
 ```
+完整 CI 模板见 `assets/github-actions-template.yml`
 
-### 原则 5：吞吐量改变合并理念（Throughput Changes Merge Philosophy）
+#### 2.4 文档园艺（Doc Gardening）
 
-**高吞吐量环境的特点**：
-- Pull Request 生命周期很短
-- 测试偶发失败通过重跑解决，而非无限期阻塞
-- 纠错成本低，等待成本高
-- 智能体对智能体的审核成为主流
+定期运行后台 Agent 清理"文档残渣"：
+- 扫描过时文档（> 90 天未更新）
+- 检测断链（引用不存在的文件）
+- 自动发起修复 PR
+- 使用 `scripts/validate-docs.py` 执行
 
-**对比**：
+#### 2.5 Agent 记忆管理
+
+Agent 需要跨会话保持上下文：
+
+**记忆类型**：
+- **工作记忆**：当前任务的上下文（自动管理）
+- **项目记忆**：设计决策、架构约定（存储在 `.codebuddy/memory/` 或 `docs/`）
+- **经验记忆**：踩过的坑、成功的模式（定期归档）
+
+**记忆维护**：
+- 定期清理过时记忆
+- 合并重复记忆
+- 将高价值经验迁移到 docs/
+- 使用 `scripts/memory-gardening.py` 自动化维护
+
+### 支柱三：验证（Verification）
+
+> 确保 Agent 产出的质量，建立信任循环
+
+#### 3.1 自动化测试覆盖
+
+- 关键用户旅程 100% 测试覆盖
+- 测试可被 Agent 自动运行
+- 失败测试有清晰的错误信息和修复指导
+- 偶发失败通过重跑解决，而非无限期阻塞
+
+#### 3.2 Agent-to-Agent 审核
+
+高吞吐量环境下，Agent 互审成为主流：
+- Agent A 提交代码 → Agent B 审核 → 自动合并
+- 人类只在关键节点介入审查
+- 审核 Agent 有明确的检查清单
+
+#### 3.3 吞吐量与合并理念
+
 ```
 低吞吐量环境          高吞吐量环境
 严格阻塞门控    →    减少阻塞门控
@@ -245,131 +234,99 @@ def check_layer_dependencies(file_path):
 纠错成本高      →    纠错成本低
 ```
 
-## 实施工作流程
+#### 3.4 质量度量
 
-### 阶段 1：诊断当前环境
+跟踪以下指标判断 Harness 效果：
+- **吞吐量**：PR 数量/天、合并时间
+- **质量**：架构违规次数、返工率
+- **自主性**：Agent 自主完成率、人工干预频率
+- **健康度**：文档新鲜度、技术债务增长率
 
-**评估清单**：
-```markdown
-## 文档体系
-- [ ] 核心架构文档是否存在且更新？
-- [ ] 设计决策是否有记录？
-- [ ] 文档是否版本化在代码仓库内？
+---
 
-## 自动化程度
-- [ ] 测试是否能自动运行？
-- [ ] CI/CD 是否完整？
-- [ ] 代码检查是否自动化？
+## MCP 工具集成
 
-## 架构约束
-- [ ] 分层架构是否有明确定义？
-- [ ] 依赖规则是否被强制执行？
-- [ ] 是否有自定义 Lint 规则？
+Model Context Protocol（MCP）是 2026 年 Agent 调用外部工具的统一标准。
 
-## 可观测性
-- [ ] Agent 能否访问日志？
-- [ ] Agent 能否访问指标？
-- [ ] Agent 能否自主测试 UI？
+**核心概念**：MCP Server 提供工具 → Agent 通过标准协议调用 → 获取结果
+
+**常见集成场景**：
+- 数据库查询（读取 Schema、执行 SQL）
+- 文件系统操作（搜索、读写）
+- API 调用（第三方服务集成）
+- 浏览器自动化（UI 测试）
+
+**Harness 中的 MCP 策略**：
+1. 在 AGENTS.md 中列出可用的 MCP 工具
+2. 在 docs/ 中记录各工具的使用约束
+3. 在 CI 中验证 MCP 配置的正确性
+
+详见 `references/mcp-integration.md`
+
+---
+
+## 多 Agent 协作模式
+
+### 协作模式
+
+1. **串行协作**：Agent A 完成 → 交接 → Agent B 继续
+2. **并行协作**：多个 Agent 同时处理不同模块
+3. **审核协作**：Agent A 写代码 → Agent B 审核
+4. **背景任务**：后台 Agent 持续运行清理/监控任务
+
+### 背景 Agent 任务编排
+
+```
+定期任务：
+  - 每日：运行架构检查，扫描违规
+  - 每周：运行文档园艺，清理过时内容
+  - 每周：运行记忆清理，归档经验
+  - 每月：生成质量报告，追踪趋势
 ```
 
-### 阶段 2：设计改进方案
+---
 
-**优先级排序**：
-1. **P0 - 基础文档结构**：创建 AGENTS.md 和 docs/目录结构
-2. **P0 - 核心架构约束**：定义分层规则并代码化
-3. **P1 - 自动化反馈回路**：完善 CI/CD 和自动测试
-4. **P1 - 文档验证机制**：确保文档与代码同步
-5. **P2 - 可观测性增强**：让 Agent 能访问日志和指标
-6. **P2 - UI 可读性**：接入 DevTools 协议
+## 实施工作流程
 
-### 阶段 3：迭代优化
+### 阶段 1：诊断（1-2 天）
+
+评估清单（详见 `references/checklist.md`）：
+- 文档体系（AGENTS.md 是否存在、docs/ 结构）
+- 架构约束（分层规则、Lint 规则）
+- 自动化程度（测试、CI/CD）
+- 可观测性（日志、指标、UI 测试）
+- 跨编辑器配置（各工具指令文件）
+- MCP 工具集成状态
+- Agent 记忆管理
+
+**产出**：成熟度评分 + 问题清单 + 改进建议
+
+### 阶段 2：设计（3-5 天）
+
+**优先级**：
+1. **P0**：AGENTS.md + docs/ 结构 + 核心架构约束
+2. **P1**：CI/CD 自动化 + 文档验证 + 跨编辑器配置
+3. **P2**：可观测性增强 + MCP 集成 + 记忆管理
+
+### 阶段 3：迭代（持续）
 
 **熵减循环**：
 ```
-运行 Agent → 产生熵（代码漂移） → 定期清理 → 编码黄金原则 → 自动修复 PR
-     ↑                                                        ↓
-     └────────────────── 持续改进 ────────────────────────────┘
+运行 Agent → 产生熵 → 定期清理 → 编码原则 → 自动修复
+     ↑                                          ↓
+     └──────────── 持续改进 ─────────────────────┘
 ```
 
-**黄金原则示例**：
-1. 优先使用共享 utility 包，而非手工辅助工具
-2. 禁止 YOLO 式探测数据，必须验证边界
-3. 所有日志必须结构化，包含 trace_id
-
-**定期清理流程**：
-```bash
-# 每周运行后台 Agent 任务
-./scripts/cleanup-ai-drift.sh
-# 扫描偏差、更新质量等级、发起重构 PR
-```
-
-## 关键成功因素
-
-### 1. 人类角色的转变
-
-**从写代码到设计环境**：
-- 人类确定方向，Agent 执行
-- 工程速度提升数个数量级
-- 核心工作：设计环境、明确意图、构建反馈回路
-
-**深度优先工作方式**：
-```
-大目标 → 拆解为小模块 → Agent 构建 → 解锁复杂任务
-         ↓
-    遇到阻塞 → 退后思考：Agent 缺什么？
-         ↓
-    补充工具/文档/约束到代码仓库
-```
-
-### 2. 情境管理
-
-**地图 vs 百科全书**：
-- ❌ 巨大的 AGENTS.md（1000+ 行）
-- ✅ 简短的地图（~100 行）+ 结构化 docs/目录
-
-**情境稀缺性认知**：
-- 情境是稀缺资源
-- 过多指导反而无效
-- 渐进式披露：从小入口开始，指导下一步
-
-### 3. 技术债务管理
-
-**认知转变**：
-```
-技术债 = 高息贷款
-
-❌ 攒到还不起时被迫清算
-✅ 每天还一点（持续清理）
-```
-
-**实践方法**：
-- 每周五清理"AI 残渣"（占 20% 时间）→ 不可持续
-- 将黄金原则编码到代码仓库 → 可持续
-- 定期运行后台 Agent 任务扫描偏差 → 自动化
-
-## 参考资源
-
-### 核心文档
-- [OpenAI Harness Engineering 原文](https://openai.com/zh-Hans-CN/index/harness-engineering/)
-- [Codex CLI](https://github.com/openai/codex)
-
-### 工具链
-- 自定义 Lint 工具
-- CI/CD 验证作业
-- 文档园艺 Agent（doc-gardening）
-- 本地可观测性堆栈
-
-### 检查清单模板
-参见 `references/checklist.md`
+---
 
 ## 输出规范
 
 使用此技能时，应产出以下内容之一：
 
 1. **诊断报告**：当前工程环境评估 + 改进建议
-2. **设计方案**：文档结构 + 架构约束 + 自动化流程
+2. **设计方案**：文档结构 + 架构约束 + 自动化流程 + 跨编辑器配置
 3. **实施计划**：分阶段路线图 + 优先级排序
-4. **实施成果**：AGENTS.md + docs/目录 + 自定义 Lint 规则
+4. **实施成果**：AGENTS.md + docs/ + Lint 规则 + CI 配置
 
 所有产出物必须：
 - 可执行、可验证
@@ -383,30 +340,17 @@ def check_layer_dependencies(file_path):
 2. **不要忽视品味**：人类品味需编码到工具和文档中
 3. **不要一次性完成**：Harness Engineering 是持续过程
 4. **不要外置知识**：所有知识必须内化到代码仓库
+5. **不要忽视跨编辑器兼容**：AGENTS.md 是基座，工具专属文件是增强
 
-## 典型案例
+## 参考资源
 
-### 案例 1：新产品开发
-```
-场景：从零开始构建新产品
-Harness 设计：
-1. 初始化 AGENTS.md（100 行地图）
-2. 创建 docs/目录结构
-3. 定义分层架构规则
-4. 编写自定义 Lint
-5. 设置 CI 验证作业
-6. 建立文档园艺流程
-结果：3 人团队，5 个月，100 万行代码，1500 个 PR
-```
-
-### 案例 2：现有项目改造
-```
-场景：已有项目，Agent 工作效率低
-诊断：架构约束只存在于文档，未代码化
-改进：
-1. 将约束编写为 Lint 规则
-2. 创建 docs/目录集中文档
-3. 添加文档验证 CI
-4. 建立每周清理流程
-结果：Agent 吞吐量提升 3 倍，返工减少 70%
-```
+- [OpenAI Harness Engineering](https://openai.com/zh-Hans-CN/index/harness-engineering/)
+- [Martin Fowler: Harness Engineering](https://martinfowler.com/articles/exploring-gen-ai/harness-engineering.html)
+- `references/checklist.md` - 完整检查清单
+- `references/golden-principles.md` - 黄金原则
+- `references/cross-editor-guide.md` - 跨编辑器配置指南
+- `references/mcp-integration.md` - MCP 工具集成指南
+- `assets/agents-template.md` - AGENTS.md 模板
+- `assets/claude-md-template.md` - CLAUDE.md 模板
+- `assets/cursor-rules-template.mdc` - Cursor Rules 模板
+- `assets/github-actions-template.yml` - CI 配置模板

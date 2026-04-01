@@ -1,0 +1,39 @@
+---
+description: 项目架构约束和编码规范（自动应用于所有文件）
+globs: "**/*.{ts,tsx,js,jsx,py}"
+alwaysApply: true
+---
+
+# 项目规则
+
+## 架构约束
+
+- 代码分层：Types → Config → Repo → Service → Runtime → UI
+- 横切关注点通过 Providers 注入
+- 禁止反向依赖（如 Service 不能引用 UI 组件）
+
+## 编码规范
+
+- 优先使用 `@/utils/` 下的共享工具包
+- 禁止 YOLO 式数据探测，必须验证边界
+- 日志使用结构化 logger，禁止 console.log
+- 错误处理使用统一的 AppError 类型
+- 配置外部化，禁止硬编码
+
+## 文件规范
+
+- 单文件不超过 300 行
+- 单函数不超过 50 行
+- 命名遵循项目统一约定
+
+## 提交规范
+
+- 代码变更必须包含测试
+- 文档必须与代码同步更新
+- PR 必须通过所有 CI 检查
+
+## 文档导航
+
+- 架构文档：`docs/design-docs/`
+- 产品规格：`docs/product-specs/`
+- 黄金原则：`docs/references/golden-principles.md`
